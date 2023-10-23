@@ -24,6 +24,7 @@ const createUser = async (req, res) => {
   if (!req.body) {
     return res.status(400).json({ msg: "User info is required." });
   }
+  // must match with front end at signUp.js  body: JSON.stringify
   const { firstName, lastName, email, password, promos } = req.body;
   const sql = `
             INSERT INTO users (first_name, last_name, email, password, promos)
@@ -104,7 +105,7 @@ const login = (req, res) => {
     // creating object with key/values
     console.log(rows[0]);
     const unsignedToken = {
-        id: rows[0].user_id,
+      id: rows[0].user_id,
       email: rows[0].email,
       // value coming from mysql database
       firstName: rows[0].first_name,
