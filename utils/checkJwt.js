@@ -19,7 +19,7 @@ const checkJwt = (req, res, next) => {
   // proccess.env.JWT_SECRET is coming from .env file
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
   console.log(decoded);
-  req.user_credentials = decoded
+  req.user_credentials = decoded;
   next();
 };
 

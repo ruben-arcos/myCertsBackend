@@ -1,9 +1,11 @@
 const db = require("../utils/db");
-const { PutObjectCommand } = require("@aws-sdk/client-s3");
+const { PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
 // this connects to AWS s3 bucket
 const s3 = require("../utils/s3");
 const crypto = require("crypto");
 // const sharp = require("sharp");
+
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
 const bucketName = process.env.BUCKET_NAME;
 
@@ -11,6 +13,7 @@ const getCertificatesByUserId = (req, res) => {
   // Extract user ID from the request
   const { id } = req.user_credentials;
   // Define a SQL query to retrieve certificates for a specific user
+
   const sql = `
     SELECT * FROM ??
     WHERE ?? = ?
@@ -18,10 +21,20 @@ const getCertificatesByUserId = (req, res) => {
   // Create an array with the table name and query parameters
   const body = ["certificates", "user_id", id];
   // Execute the database query
-  db.query(sql, body, (error, rows) => {
+  db.query(sql, body, async (error, rows) => {
     // If there's an error, return an error response
     if (error) {
       return res.json({ error });
+    }
+    for (const certificate of rows) {
+      const getObjectParams = {
+        Bucket: bucketName,
+        Key: certificate.image_name,
+      };
+
+      const command = new GetObjectCommand(getObjectParams);
+      const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+      certificate.image_url = url;
     }
     // Otherwise, return the retrieved rows as a JSON response
     res.json(rows);
@@ -75,13 +88,24 @@ const postCertificate = async (req, res) => {
 
   // Execute the database query
   db.query(sql, body, (error, results) => {
+    console.log(results, "these are the results");
+    console.log(error, "this are the error");
     // If there's an error, return an error response
     if (error) {
       return res.json({ error });
     }
-     // Otherwise, return a success message and the query results as a JSON response
+    // Otherwise, return a success message and the query results as a JSON response
     res.json({ msg: "Hello!", results });
   });
+};
+
+// Delete certification
+const deleteCertification = (req, res) => {
+  const id = +req.params.id;
+
+  const sql = "";
+
+  res.json({});
 };
 
 // Export the functions as modules for use in other parts of the application
