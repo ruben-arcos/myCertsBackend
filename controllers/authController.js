@@ -117,4 +117,9 @@ const login = (req, res) => {
   });
 };
 
-module.exports = { createUser, allUsers, userById, login };
+const revalidate = (req, res) => {
+  console.log("revalidate", req.user_credentials);
+  res.json(req.user_credentials);
+};
+
+module.exports = { createUser, allUsers, userById, login, revalidate };
