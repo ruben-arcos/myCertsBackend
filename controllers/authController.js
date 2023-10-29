@@ -81,7 +81,7 @@ const login = (req, res) => {
     }
     // handling if user exist with email
     if (rows.length === 0) {
-      return res.json({
+      return res.status(401).json({
         msg: "Username does not exist. Please create account.",
       });
     }
