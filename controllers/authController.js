@@ -113,7 +113,11 @@ const login = (req, res) => {
     };
     //
     const token = jwt.sign(unsignedToken, process.env.JWT_SECRET);
-    return res.json({ msg: "login successful", token });
+    return res.json({
+      msg: "login successful",
+      token,
+      user: unsignedToken,
+    });
   });
 };
 
