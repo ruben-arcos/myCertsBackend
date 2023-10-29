@@ -43,13 +43,13 @@ const createUser = async (req, res) => {
 
   db.query(sql, body, (error, results) => {
     if (error && error.errno === 1062) {
-      return res.json({
+      return res.status(401).json({
         msg: "Email already exists, try logging in.",
         error,
       });
     }
     if (error) {
-      return res.json({
+      return res.status(401).json({
         msg: "Problem creating account.",
         error,
       });
