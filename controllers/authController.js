@@ -96,7 +96,7 @@ const login = (req, res) => {
     console.log(match, "match");
     if (!match) {
       // keep msg ambiguous
-      return res.json({
+      return res.status(401).json({
         msg: "Username or password is incorrect. Please try again",
       });
     }
